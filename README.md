@@ -26,4 +26,7 @@ Aplikasi memuat semua koleksi saat masuk, menyimpan perubahan lewat *diff-upsert
 Buka `index.html` lewat server statis apa pun (mis. `python3 -m http.server`). Tes logika: jalankan `runTests()` di konsol browser setelah masuk.
 
 ## Deploy
-Push ke `main` → GitHub Pages. Skema dan Edge Function di-deploy ke proyek Supabase `upscale-finance-monitoring` (ap-southeast-1).
+Repo privat (GitHub Pages tidak tersedia di plan gratis untuk repo privat), jadi aplikasi disajikan dari Supabase sendiri:
+- `index.html` diunggah ke Storage bucket `app` (hanya Master yang boleh unggah) — `./deploy.sh <username-master> <sandi>`
+- Edge Function `app` menyajikannya sebagai `text/html` → **https://vfffkwayrjepacmbasmo.supabase.co/functions/v1/app**
+- Proyek Supabase: `upscale-finance-monitoring` (ap-southeast-1). Skema di `supabase/migrations`, fungsi di `supabase/functions`.
