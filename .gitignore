@@ -1,0 +1,5 @@
+.DS_Store
+*.xlsx
+*.pdf
+node_modules
+.env*

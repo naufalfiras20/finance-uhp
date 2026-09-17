@@ -1,0 +1,1 @@
+alter publication supabase_realtime add table public.customers, public.sellers, public.items, public.terms, public.taxes, public.comm_rules, public.banks, public.views, public.quotes, public.invoices, public.receipts, public.credit_notes, public.comm_payments, public.settings;
