@@ -1,4 +1,4 @@
-# Upscale · Finance Monitoring
+# finance-uhp · Upscale Finance Monitoring
 
 Sistem revenue management internal Upscale House Project (PT Upscale Digital Indonesia): faktur penjualan, penerimaan & PPh, proyeksi revenue (basis faktur & akrual), proyeksi cash in, penagihan piutang, komisi BD/AM, buku bank, laporan yang bisa dikustom, log aktivitas.
 
@@ -26,7 +26,8 @@ Aplikasi memuat semua koleksi saat masuk, menyimpan perubahan lewat *diff-upsert
 Buka `index.html` lewat server statis apa pun (mis. `python3 -m http.server`). Tes logika: jalankan `runTests()` di konsol browser setelah masuk.
 
 ## Deploy
-Repo privat (GitHub Pages tidak tersedia di plan gratis untuk repo privat), jadi aplikasi disajikan dari Supabase sendiri:
+Dua alamat, isi sama:
+- **https://naufalfiras20.github.io/finance-uhp/** — GitHub Pages, otomatis tiap push ke `main` (repo publik; kode saja, tanpa data — semua data ada di Supabase di balik login & RLS; data contoh di kode memakai nama fiktif)
 - `index.html` diunggah ke Storage bucket `app` (hanya Master yang boleh unggah) — `./deploy.sh <username-master> <sandi>`
 - Edge Function `app` menyajikannya sebagai `text/html` → **https://vfffkwayrjepacmbasmo.supabase.co/functions/v1/app**
 - Proyek Supabase: `upscale-finance-monitoring` (ap-southeast-1). Skema di `supabase/migrations`, fungsi di `supabase/functions`.
