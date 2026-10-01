@@ -1,0 +1,18 @@
+name: Keep Supabase alive
+
+on:
+  schedule:
+    # Tiap 6 hari sekali (lebih cepat dari batas auto-pause 7 hari Supabase free tier)
+    - cron: '0 3 */6 * *'
+  workflow_dispatch: {}
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Query ringan ke Supabase
+        run: |
+          curl -sf "https://vfffkwayrjepacmbasmo.supabase.co/rest/v1/settings?select=key&limit=1" \
+            -H "apikey: sb_publishable_hfSq3vLE6u05YHJMREJXOw_aNPDX2KO" \
+            -H "Authorization: Bearer sb_publishable_hfSq3vLE6u05YHJMREJXOw_aNPDX2KO" \
+            -o /dev/null -w "Status: %{http_code}\n"
