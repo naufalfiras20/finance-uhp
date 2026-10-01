@@ -2,8 +2,10 @@ name: Keep Supabase alive
 
 on:
   schedule:
-    # Tiap 6 hari sekali (lebih cepat dari batas auto-pause 7 hari Supabase free tier)
-    - cron: '0 3 */6 * *'
+    # Tiap hari jam 03:00 UTC — jauh lebih cepat dari batas auto-pause 7 hari Supabase free tier.
+    # (Catatan: "*/N" di field tanggal bulan itu BUKAN "tiap N hari", tapi tanggal kelipatan N —
+    # bisa nyaris kelewat jendela 7 hari kalau selisih antar tanggal jatuh > 7. Jadi dibikin harian saja.)
+    - cron: '0 3 * * *'
   workflow_dispatch: {}
 
 jobs:
