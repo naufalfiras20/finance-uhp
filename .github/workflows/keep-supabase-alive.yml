@@ -12,9 +12,18 @@ jobs:
   ping:
     runs-on: ubuntu-latest
     steps:
-      - name: Query ringan ke Supabase
+      - name: Tulis heartbeat ke database Supabase
         run: |
-          curl -sf "https://vfffkwayrjepacmbasmo.supabase.co/rest/v1/settings?select=key&limit=1" \
+          # PATCH (bukan cuma SELECT) ke tabel keepalive — update baris beneran kena RLS yang
+          # mengizinkan anon update, jadi tercatat sebagai aktivitas database asli, bukan cuma
+          # hit API yang mungkin diabaikan oleh detektor auto-pause Supabase.
+          code=$(curl -s -o /tmp/resp.json -w "%{http_code}" -X PATCH \
+            "https://vfffkwayrjepacmbasmo.supabase.co/rest/v1/keepalive?id=eq.1" \
             -H "apikey: sb_publishable_hfSq3vLE6u05YHJMREJXOw_aNPDX2KO" \
             -H "Authorization: Bearer sb_publishable_hfSq3vLE6u05YHJMREJXOw_aNPDX2KO" \
-            -o /dev/null -w "Status: %{http_code}\n"
+            -H "Content-Type: application/json" \
+            -H "Prefer: return=minimal" \
+            -d '{"pinged_at":"now()"}')
+          echo "Status: $code"
+          cat /tmp/resp.json || true
+          if [ "$code" -ge 300 ]; then exit 1; fi
