@@ -1,0 +1,33 @@
+name: Auto-restore Supabase
+
+on:
+  schedule:
+    - cron: '23 * * * *'
+  workflow_dispatch: {}
+
+jobs:
+  restore:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cek status project, restore kalau ke-pause
+        env:
+          TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: |
+          ref=vfffkwayrjepacmbasmo
+          if [ -z "$TOKEN" ]; then
+            echo "::warning::Secret SUPABASE_ACCESS_TOKEN belum diisi — auto-restore belum aktif."
+            exit 0
+          fi
+          status=$(curl -s "https://api.supabase.com/v1/projects/$ref" \
+            -H "Authorization: Bearer $TOKEN" | jq -r '.status // "UNKNOWN"')
+          echo "Status project: $status"
+          case "$status" in
+            INACTIVE|PAUSED)
+              code=$(curl -s -o /dev/null -w "%{http_code}" -X POST \
+                "https://api.supabase.com/v1/projects/$ref/restore" \
+                -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" -d '{}')
+              echo "Restore dikirim, HTTP $code"
+              [ "$code" -lt 300 ] || exit 1 ;;
+            UNKNOWN)
+              echo "::error::Gagal baca status (token salah/kedaluwarsa?)"; exit 1 ;;
+          esac
