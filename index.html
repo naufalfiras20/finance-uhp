@@ -430,7 +430,7 @@ function tgText(m){const d=tgData(m);return mlong(m)+'\nBelum terbit: '+fmt(d.b)
 function tgCopy(){const t=tgText(tgM||ym(iso(TODAY)));try{navigator.clipboard.writeText(t).then(()=>toast('Ringkasan disalin'),()=>toast('Gagal menyalin'))}catch(e){toast('Gagal menyalin')}}
 function tgGo(m){tgM=m;tgDirty=false;nav()}
 function tgDirtyOn(){tgDirty=true;const b=document.getElementById('tgSave');if(b)b.disabled=false}
-function tgSave(){const m=tgM||ym(iso(TODAY));const v=Math.round(+document.getElementById('tgInp').value||0);if(v>10000000000){toast('Target maksimal Rp10 miliar per bulan');return}S.targets=S.targets||{};if(v>0)S.targets[m]=v;else delete S.targets[m];logIt('target',m,'Target '+mlong(m)+' = '+fmt(v));save();tgDirty=false;toast('Target '+mlong(m)+' disimpan');nav()}
+function tgSave(){const m=tgM||ym(iso(TODAY));const v=Math.round(+document.getElementById('tgInp').value||0);S.targets=S.targets||{};if(v>0)S.targets[m]=v;else delete S.targets[m];logIt('target',m,'Target '+mlong(m)+' = '+fmt(v));save();tgDirty=false;toast('Target '+mlong(m)+' disimpan');nav()}
 routes.salestarget=function(){const m=tgM||(tgM=ym(iso(TODAY)));const d=tgData(m);const ms=tgMonths();const i=ms.indexOf(m);const prev=ms[i+1],next=ms[i-1];
  const by={};[...d.iss,...d.drf].forEach(v=>{const k=v.cust;const o=by[k]=by[k]||{c:cu(k),vs:[],tot:0,paid:0,rem:0,ex:0,nw:0,dr:0};const x=calc(v);o.vs.push(v);o.tot+=x.total;if(v.status==='draft')o.dr+=x.total;else{o.paid+=x.paid;o.rem+=Math.max(0,x.rem);if(v.custType==='baru')o.nw+=x.total;else o.ex+=x.total}});
  const brands=Object.values(by).sort((a,b)=>b.tot-a.tot);
