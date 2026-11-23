@@ -1,5 +1,5 @@
 // admin-users · dipanggil dari aplikasi oleh akun Master untuk kelola akun.
-// Aksi: create {username,name,role,password} · password {user_id,password} · active {user_id,active} · role {user_id,role}
+// Aksi: create {username,name,role,password,division?} · password {user_id,password} · active {user_id,active} · role {user_id,role}
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
 
@@ -33,10 +33,10 @@ Deno.serve(async (req) => {
       const username = String(body.username || "").trim().toLowerCase();
       if (!/^[a-z0-9._-]{3,}$/.test(username)) return json({ error: "Nama pengguna minimal 3 huruf kecil/angka" }, 400);
       if (!body.password || String(body.password).length < 6) return json({ error: "Kata sandi minimal 6 karakter" }, 400);
-      const role = ["master", "finance", "accounting"].includes(body.role) ? body.role : "accounting";
+      const role = ["master", "finance", "accounting", "staff"].includes(body.role) ? body.role : "accounting";
       const { data, error } = await admin.auth.admin.createUser({
         email: `${username}@${DOMAIN}`, password: body.password, email_confirm: true,
-        user_metadata: { username, name: body.name || username, role },
+        user_metadata: { username, name: body.name || username, role, division: body.division || "" },
       });
       if (error) return json({ error: error.message }, 400);
       return json({ ok: true, user_id: data.user.id });
@@ -53,7 +53,7 @@ Deno.serve(async (req) => {
       return json({ ok: true });
     }
     if (a === "role") {
-      const role = ["master", "finance", "accounting"].includes(body.role) ? body.role : null;
+      const role = ["master", "finance", "accounting", "staff"].includes(body.role) ? body.role : null;
       if (!role) return json({ error: "Peran tidak valid" }, 400);
       if (body.user_id === me.user.id) return json({ error: "Tidak bisa mengubah peran sendiri" }, 400);
       const { error } = await admin.from("profiles").update({ role }).eq("id", body.user_id);
